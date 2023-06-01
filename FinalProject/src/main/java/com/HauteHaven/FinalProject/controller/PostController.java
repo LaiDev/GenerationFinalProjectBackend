@@ -1,10 +1,9 @@
 package com.HauteHaven.FinalProject.controller;
 
 import com.HauteHaven.FinalProject.Post;
-import com.HauteHaven.FinalProject.repository.PostRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.HauteHaven.FinalProject.controller.dto.PostDto;
+import com.HauteHaven.FinalProject.service.PostService;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -14,46 +13,45 @@ import java.util.Optional;
 @RequestMapping("/post")
 public class PostController {
 
-    private final PostRepository postRepository;
+    final PostService postService;
 
-    public PostController(PostRepository postRepository) {
-        this.postRepository = postRepository;
+    public PostController( PostService postService) {
+        this.postService = postService;
     }
 
     //Returns .findAll() Method
     @GetMapping
     public List<Post> getPost() {
-        return postRepository.findAll();
-    }
-/*
-    //returns void type
-    //calls postService.save(post)
-    //listens at requestMapping endpoint
-    //requires a requestBody
-    @PostMapping
-    public void savePost(@RequestBody Post post) {
-        postService.save(post);
+        return postService.findAll();
     }
 
-    @DeleteMapping
+    @PostMapping
+    public Post save(@RequestBody PostDto postDto) {
+        return postService.save(new Post( postDto ));
+    }
+
+
+
+    @DeleteMapping(" /{id}")
     public void deletePost(@PathVariable Long id) {
         postService.deleteById(id);
     }
 
-    @PutMapping
-    public void updatePost(@RequestBody Post post) {
-        postService.updatePost(post);
+    @GetMapping("/{id}")
+    public Optional<Post> getPostById(@PathVariable Long id) {
+        return postService.findPostByID((id));
     }
 
-    @GetMapping("/{id}")
-    public Post getPostById(@PathVariable Long id){
-        Optional<Post> returned = postService.findPostByID(id);
-        if(returned.isPresent()){
-            return returned.get();
-        }else {
-            return new Post();
+    @PutMapping( "/{id}")
+    public Optional<Post> update( @RequestBody PostDto postDto, @PathVariable Long id ){
+           Optional<Post> optionalPost = postService.findPostByID(id);
+            Post post = optionalPost.orElse(null);
+            post.setTitle( postDto.getTitle() );
+            post.setDescription( postDto.getDescription() );
+            post.setImageUrl( postDto.getImageUrl() );
+            return Optional.ofNullable(postService.save(post));
         }
+    }
 
-    } */
-}
+
 

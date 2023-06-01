@@ -21,20 +21,15 @@ public class PostService {
     }
 
     public Optional<Post> findPostByID(Long postId){
-        return postRepository.findById(postId);
+        return postRepository.findById((postId));
     }
 
-    public void save(Post post) {
-        postRepository.save(post);
+    public Post save(Post post) {
+       return postRepository.save(post);
     }
 
     public void deleteById(Long postId){
         postRepository.deleteById(postId);
     }
 
-    public void updatePost(Post post){
-        Long id = post.getId();
-        postRepository.deleteById(id);
-        postRepository.save(post);
-    }
 }
